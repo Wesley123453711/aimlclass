@@ -23,6 +23,7 @@ public class PageController {
 
 	@RequestMapping("/")
 	public String index() {
+		
 		return "index.html";
 	}
 	

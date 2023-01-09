@@ -111,4 +111,9 @@ public class MemberController {
 		}
 		return true;
 	}
+	@RequestMapping("/deletesession")
+	public void deletesession(HttpSession session, HttpServletResponse response) throws IOException {
+		session.removeAttribute("uid");
+		response.sendRedirect("/");
+	}
 }
