@@ -1,4 +1,4 @@
-var redirect = "https://7030-118-168-151-14.jp.ngrok.io/Youtube";
+var redirect = " https://85b4-1-160-23-171.jp.ngrok.io/";
 var apikey = "AIzaSyC0jPQ_aKzKy8c-tgb51KsWlI9yenvrnYc";
 var clientid = "1060838685118-9id0hmf1nuos4iuql3brnk33br99erva.apps.googleusercontent.com";
 var broadcast_id;
@@ -39,9 +39,9 @@ function authenticate() {
       .signIn({scope: "https://www.googleapis.com/auth/youtube.force-ssl",prompt:"consent",redirect_uri:redirect})
       .then(function(response) {
           console.log("Sign-in successful",response);
-                		name=response.name,
-                        email=response.email,
-                        password=response.id
+                		name=response.getBasicProfile().getName()
+                        email=response.getBasicProfile().getEmail()
+                        password=response.getBasicProfile().getId()
           },
             function(err) { console.error("Error signing in", err); });
 }

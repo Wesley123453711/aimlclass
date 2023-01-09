@@ -72,6 +72,6 @@ function fblogout(){
             password=null;
             email=null;
             location.reload()
-        }else{alert("log in frist!")} 
+        }
     });
 };

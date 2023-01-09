@@ -64,25 +64,24 @@ google.addEventListener('click',function(e){
 					+'&loginstatus='+ sign
 					)
 			    .then(function(response){
-			        console.log('登入傳送後端成功',response)
+			        console.log('google登入傳送後端成功',response)
 		        },
-				function(err){console.error("登入傳送後端錯誤",err)}
-		)},function(err){console.error("google 登入錯誤",err)})
+				function(err){console.error("google登入傳送後端錯誤",err)}
+		)},function(err){console.error("google登入錯誤",err)})
 });
 //facebook登入按鈕加入監聽click事件，觸發-登入-api_response->後端(email,password,sign)
 facebook.addEventListener('click',function(e){
     //可用 fetch() 傳輸後端
-        fblogin().then(
+        fblogin()
 		fetch(
 				'/doLogin?email='+ "wesiey871026@gmail.com" 
 				+'&password='+ "asdasdasdasd"
 				+'&loginstatus='+ sign
 				,'post')
 		    .then(function(response){
-		        console.log('登入傳送後端成功',response)
+		        console.log('fb登入傳送後端成功',response)
 	            },
-			    function(err){console.error("登入傳送後端錯誤",err)}
-	            )
+			    function(err){console.error("fb登入傳送後端錯誤",err)}
 	    )        
 });
 </script>
