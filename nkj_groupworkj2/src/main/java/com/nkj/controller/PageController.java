@@ -36,6 +36,11 @@ public class PageController {
 		return "contact.html";
 	}
 	
+	@RequestMapping("/signin")
+	public String signin() {
+		return "signin.html";
+	}
+	
 //	@ResponseStatus(value = HttpStatus.OK)
 //	@GetMapping(value = "/user/{name}")
 //	public void process(@PathVariable String name) {
