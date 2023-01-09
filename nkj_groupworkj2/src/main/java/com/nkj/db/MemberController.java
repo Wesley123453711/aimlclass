@@ -66,6 +66,7 @@ public class MemberController {
 	public void doLogin(@RequestParam String[] data, HttpSession session, HttpServletResponse response) throws IOException {
 		String email = data[0];
 		String password = data[1];
+		String loginstatus = data[2];
 		MemberModel input = new MemberModel();
 		input.setEmail(email);
 		
@@ -82,7 +83,13 @@ public class MemberController {
 //			response.addCookie(cookie);
 			System.out.println("成功登入!");
 			response.sendRedirect("/");
-		} else {
+		} else if(loginstatus=="true") {
+			System.out.println("第三方登入!!");
+			session.setAttribute("session_email", email);
+			session.setAttribute("session_password", password);
+			session.setAttribute("uid", email);
+			response.sendRedirect("/createMember");
+		}else {
 			System.out.println("登入失敗!!");
 			response.sendRedirect("/login");
 		}
@@ -97,7 +104,7 @@ public class MemberController {
 	private boolean isValidPassword(String password) {
 		// 檢查密碼是否符合密碼強度要求
 		// 例如，檢查密碼長度、是否包含大小寫
-		String regex = "^.{8,16}$"; // 設置正則表達式
+		String regex = "^.{8,100}$"; // 設置正則表達式
 		if (!password.matches(regex)) {
 			// 密碼長度不符合要求
 			return false;

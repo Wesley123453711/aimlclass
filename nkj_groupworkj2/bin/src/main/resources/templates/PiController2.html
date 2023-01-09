@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/css/control_style.css">
+<title>控制介面</title>
+<!-- JQuery 的 CDN 連結 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+	integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"
+	referrerpolicy="no-referrer"></script>
+
+<script type="text/javascript" charset="utf-8">
+		//畫布初始化
+		var ctx;
+		var c;
+		window.onload = function() {
+			c = document.getElementById("myCanvas");
+		    ctx = c.getContext("2d");
+		    ctx.beginPath();
+		    ctx.stroke();
+		}
+        var websocket = null;
+        //判斷當前瀏覽器是否支持WebSocket
+        if ('WebSocket' in window) {
+            //改成你的地址
+            websocket = new WebSocket(
+                "ws://127.0.0.1:8080/websocket/100");
+        } else {
+            alert('當前瀏覽器不支援 websocket')
+        }
+
+        //連接發生錯誤的回調方法
+        websocket.onerror = function () {
+            setMessageInnerHTML("WebSocket連接發生錯誤");
+        };
+
+        //連接成功建立的回調方法
+        websocket.onopen = function () {
+            setMessageInnerHTML("WebSocket連接成功");
+        }
+		
+        const rect_strDetect = /\/rect /g;
+        //接收到消息的回調方法
+        websocket.onmessage = function (event) {
+            //console.log(event);	
+            
+            //畫框
+            const msg = event.data;
+            if (rect_strDetect.test(msg)) {
+            	var cmd = (event.data).split(' ');
+            	if (cmd[1]=="cl") {
+                	ctx.clearRect(0, 0, c.width, c.height);
+                	ctx = c.getContext("2d");
+        		    ctx.beginPath();
+                	ctx.stroke();
+            	} 
+            	else {
+	            	ctx.rect(cmd[1], cmd[2], cmd[3], cmd[4]);
+	            	ctx.stroke();
+            	}
+            }
+            //用regex辦別
+            //應該改用array list收要框幾個
+            
+            if (event.data == "/java stream on") {
+                $('#iframe_video').attr('src', 'http://127.0.0.1:5000/video');
+                setTimeout(function () {
+                    $('#iframe_video').attr('src', 'http://127.0.0.1:5000/video');
+                }, 2000); //ms
+            }
+            else if (event.data == "/java stream off") {
+                $('#iframe_video').attr('src', 'http://127.0.0.1:5000/blank');
+            }
+            else if (event.data == "/java audio on") {
+                $('#iframe_audio').attr('src', 'http://127.0.0.1:5000/audio');
+                /*setTimeout(function () {
+                    $('#iframe_audio').attr('src', 'http://127.0.0.1:5000/audio');
+                }, 2000);*/ //ms
+            }
+            else if (event.data == "/java audio off") {
+                $('#iframe_audio').attr('src', 'http://127.0.0.1:5000/blank');
+            }
+            else {
+                setMessageInnerHTML(event.data);
+            }
+            
+
+            
+        }
+
+        //連接關閉的回調方法
+        websocket.onclose = function () {
+            setMessageInnerHTML("WebSocket連接關閉");
+        }
+
+        //監聽窗口關閉事件，當窗口關閉時，主動去關閉websocket連接，防止連接還沒斷開就關閉窗口，server端會拋異常。
+        window.onbeforeunload = function () {
+            closeWebSocket();
+        }
+
+        //將消息顯示在網頁上
+        function setMessageInnerHTML(innerHTML) {
+            //document.getElementById('message').innerHTML = innerHTML + '<br/>' + document.getElementById('message').innerHTML;
+        	document.getElementById('message').innerHTML += innerHTML + '<br/>';
+        	var objDiv = document.getElementById("message");
+        	objDiv.scrollTop = objDiv.scrollHeight;
+        }
+
+        //關閉WebSocket連接
+        function closeWebSocket() {
+            websocket.close();
+        }
+
+        //發送消息
+        function send() {
+            var message = document.getElementById('text').value;
+            if (message != "") {
+                websocket.send(message);
+            }
+            //setMessageInnerHTML(message + "");
+        }
+        
+
+        $(document).ready(
+            function () {
+                //java socketio test1
+                document.addEventListener('keydown', (e) => {
+                	if (e.code === "Enter") {
+                        send();
+                    }
+                    if (e.key === "p" || e.key === "P") {
+                    	websocket.send('/snapshot');
+                    }
+                    if (e.keyCode == '38') {
+                        // up arrow
+                    	websocket.send('/pi a 0 -8');
+                    }
+                    else if (e.keyCode == '40') {
+                        // down arrow
+                    	websocket.send('/pi a 0 8');
+                    }
+                    else if (e.keyCode == '37') {
+                       // left arrow
+                    	websocket.send('/pi a -8 0');
+                    }
+                    else if (e.keyCode == '39') {
+                       // right arrow
+                    	websocket.send('/pi a 8 0');
+                    }
+                });
+
+                $("#camera_on").click(function (e) {
+                    if($('#camera_on').prop('checked')) {
+                    	websocket.send('/camera on');
+                    }
+                    else {
+                    	websocket.send('/camera off');
+                    }
+                	
+                });
+
+                $("#mic_on").click(function (e) {
+                    if($('#mic_on').prop('checked')) {
+                    	websocket.send('/mic on');
+                    }
+                    else {
+                    	websocket.send('/mic off');
+                    }
+                	
+                });
+                
+                $("#motor_on").click(function (e) {
+                    if($('#motor_on').prop('checked')) {
+                    	websocket.send('/m on');
+                    }
+                    else {
+                    	websocket.send('/m off');
+                    }
+                	
+                });
+                
+                $("#video_rec_on").click(function (e) {
+                    if($('#video_rec_on').prop('checked')) {
+                    	websocket.send('/rec v on');
+                    }
+                    else {
+                    	websocket.send('/rec v off');
+                    }
+                });
+                $("#audio_rec_on").click(function (e) {
+                    if($('#audio_rec_on').prop('checked')) {
+                    	websocket.send('/rec a on');
+                    }
+                    else {
+                    	websocket.send('/rec a off');
+                    }
+                });
+                $("#AV_rec_on").click(function (e) {
+                	if($('#video_rec_on').prop('checked')) {
+	                	$('#video_rec_on').click();
+	                	$('#audio_rec_on').click();
+                	}
+                    else {
+	                	$('#video_rec_on').click();
+	                	$('#audio_rec_on').click();
+                    }
+                });
+                
+                
+                
+                
+                $("#admin_on").click(function (e) {
+                    if($('#admin_on').prop('checked')) {
+                    	$('#message').show();
+                    	$('#text').show();
+                    	$('#send_command').show();
+                    }
+                    else {
+                    	$('#message').hide();
+                    	$('#text').hide();
+                    	$('#send_command').hide();
+                    }
+                	
+                });
+                
+                
+                $("#snapshot").click(function (e) {
+                	websocket.send('/snapshot');
+                });
+                
+                $("#up").click(function (e) {
+                	websocket.send('/pi a 0 -8');
+                });
+                $("#down").click(function (e) {
+                	websocket.send('/pi a 0 8');
+                });
+                $("#left").click(function (e) {
+                	websocket.send('/pi a -8 0');
+                });
+                $("#right").click(function (e) {
+                	websocket.send('/pi a 8 0');
+                });
+                $("#zeropoint").click(function (e) {
+                	websocket.send('/pi t 0 0');
+                });
+                
+                
+                $("#ai_none").click(function (e) {
+                    	websocket.send('/ai1 off');
+                    	websocket.send('/ai2 off');
+                });
+                
+                $("#ai_1").click(function (e) {
+                    if($('#ai_1').prop('checked')) {
+                    	websocket.send('/ai1 on');
+                    	websocket.send('/ai2 off');
+                    }
+                });
+                $("#ai_2").click(function (e) {
+                    if($('#ai_2').prop('checked')) {
+                    	websocket.send('/ai1 off');
+                    	websocket.send('/ai2 on');
+                    }
+                });
+            });
+
+        //range bar 和 text 互相mapping
+        function change_text_vert() {
+            $("#bar_vert").val($("#text_vert").val());
+            $("#vert_change_ang").val(($("#text_vert").val()) / 4096 * 360);
+        }
+        function change_text_horz() {
+            $("#bar_horz").val($("#text_horz").val());
+            $("#horz_change_ang").val(($("#text_horz").val()) / 4096 * 360);
+        }
+        function change_bar_vert() {
+            $("#text_vert").val($("#bar_vert").val());
+            $("#vert_change_ang").val(($("#bar_vert").val()) / 4096 * 360);
+        }
+        function change_bar_horz() {
+            $("#text_horz").val($("#bar_horz").val());
+            $("#horz_change_ang").val(($("#bar_horz").val()) / 4096 * 360);
+        }
+    </script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="login-left">
+			<div class="login-left-container">
+				<div class="login-left-container-top">
+					<div class="login-form">
+						<div class="login-form-content">
+
+							<div class="form-item">
+
+								<div id="message" style="border: 1px black solid; height: 200px; width: 330px; vertical-align: bottom; overflow: auto; align-self: flex-end;">
+									<br>
+									<br>
+									<br>
+									<br>
+									<br>
+									<br>
+									<br>
+									<br>
+									<br>
+								</div>
+								<input id="text" type="text"></input>
+								<button id="send_command" onclick="send()">送出</button>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+				<div class="login-left-container-bottom">
+					<div class="position-absolute bottom-0">
+						<label>
+							<input type="checkbox" name="" id="admin_on" class="checkbox" checked="checked">
+							<span class="btn-box">
+								<span class="btn"></span>
+							</span>
+							<span class="text">控制台</span>
+						</label>
+						<br>
+						<label>
+							<input type="checkbox" name="" id="camera_on" class="checkbox">
+							<span class="btn-box">
+								<span class="btn"></span>
+							</span>
+							<span class="text">相機</span>
+						</label>
+						<label>
+							<input type="checkbox" name="" id="mic_on" class="checkbox">
+							<span class="btn-box">
+								<span class="btn"></span>
+							</span>
+							<span class="text">收音</span>
+						</label>
+						<label>
+							<input type="checkbox" name="" id="motor_on" class="checkbox">
+							<span class="btn-box">
+								<span class="btn"></span>
+							</span>
+							<span class="text">馬達</span>
+						</label>
+						<br>
+						<label>
+							<input type="checkbox" name="" id="video_rec_on" class="checkbox">
+							<span class="btn-box">
+								<span class="btn"></span>
+							</span>
+							<span class="text">錄影</span>
+						</label>
+						<label>
+							<input type="checkbox" name="" id="audio_rec_on" class="checkbox">
+							<span class="btn-box">
+								<span class="btn"></span>
+							</span>
+							<span class="text">錄音</span>
+						</label>
+						<label>
+							<input type="checkbox" name="" id="AV_rec_on" class="checkbox">
+							<span class="btn-box">
+								<span class="btn"></span>
+							</span>
+							<span class="text">影音錄製</span>
+						</label>
+
+						<form>
+							AI模式
+							<br>
+							<input type="radio" name="cat" value="0" id='ai_none' checked>
+							無
+							<br>
+							<input type="radio" name="cat" value="1" id='ai_1'>
+							ai1: mediapipe face detect 單步移動模式
+							<br>
+							<input type="radio" name="cat" value="2" id='ai_2'>
+							ai2: mediapipe face detect 大步移動模式
+							<br>
+							<input type="radio" name="cat" value="3" id='ai_3'>
+							ai3: 暫無...  
+							<br>
+						</form>
+						
+						<button id="snapshot">拍照</button>
+						<br>
+						<!-- 
+						<iframe src="http://127.0.0.1:5000/blank" width="250" height="80" id="iframe_audio"></iframe>
+ 						-->
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="login-right">
+			<table align="center" valign="center">
+				<tr>
+					<td>
+						<!-- <input type="text">
+                        <input type="text">
+                        <button type="button" class="btn btn-primary"> -->
+					</td>
+					<td align="center" valign="center" style="vertical-align: bottom;">
+						<button type="submit" id="up">
+							<img class="img-fluid" src="/images/white-down-arrow.png" style="transform: rotate(180deg); height: 72px">
+						</button>
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>
+						<button type="submit" id="left">
+							<img class="img-fluid" src="/images/white-down-arrow.png" style="transform: rotate(90deg); height: 72px">
+						</button>
+					</td>
+					<td>
+						<canvas id="myCanvas" width="644" height="484" style="position:absolute; z-index:99;"></canvas>
+						<iframe src="http://127.0.0.1:5000/video" width="644" height="484" id="iframe_video" style="position:relative; z-index:98;"></iframe>
+						
+					</td>
+					<td>
+						<button type="submit" id="right">
+							<img class="img-fluid" src="/images/white-down-arrow.png" style="transform: rotate(270deg); height: 72px">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="zeropoint">歸零</button>
+					</td>
+					<td align="center" valign="center" style="vertical-align: top;">
+						<button type="submit" id="down">
+							<img class="img-fluid" src="/images/white-down-arrow.png" style="height: 72px">
+						</button>
+					</td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+</body>
+
+</html>

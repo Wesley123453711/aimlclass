@@ -42,7 +42,7 @@ public class MemberRepository {
 
 		public MemberModel mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-			return new MemberModel(rs.getString("email"), rs.getString("password"));
+			return new MemberModel(rs.getString("email"), rs.getString("password"), rs.getString("role"));
 		}
 	}
 }

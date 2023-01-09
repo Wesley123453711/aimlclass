@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>盯霸</title>
+<link rel="stylesheet" href="./sass/all.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+	integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"
+	referrerpolicy="no-referrer"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#goLogin").click(function(e) {
+			location.href = '/login';
+		});
+
+		$("#goReg").click(function(e) {
+			location.href = '/signin';
+		});
+
+		$("#goController").click(function(e) {
+			location.href = '/websocket/100';
+		});
+	});
+</script>
+
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="#">盯霸</a>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-2">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="#">首頁</a>
+					</li>
+					<li class="nav-item dropdown">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/contact">關於我們</a>
+					</li>
+					</li>
+					<li class="nav-item">
+						<button type="button" class="btn btn-primary" id="goLogin">登入</button>
+					</li>
+				</ul>
+				<button type="button" class="btn btn-primary" id="goReg">註冊</button>
+			</div>
+		</div>
+	</nav>
+	<header class="header"
+		style="background-image: url(https://images.unsplash.com/photo-1542648816826-60305677f27f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80)">
+		<div class="container d-flex align-items-center h-100">
+			<div>
+				<h1 class="text-white">貓貓汁正盯著你</h1>
+				<button class="btn btn-primary col-10" type="button" id="goController">開始</button>
+			</div>
+		</div>
+	</header>
+	<section class="container mt-6">
+		<div class="row justify-content-center">
+			<div class="col-md-5">
+				<img class="height-s5 w-100 object-fit-cover"
+					src="https://thumbor.4gamers.com.tw/azA1DI6UNiaHB1sDeqSxBj9wFJw=/adaptive-fit-in/1200x1200/filters:no_upscale():extract_cover():format(jpeg):quality(85)/https%3A%2F%2Fugc-media.4gamers.com.tw%2Fpuku-prod-zh%2Fanonymous-story%2F1036f24f-7593-4627-9488-fab6d83ce65a.jpg">
+			</div>
+			<div class="col-md-5 d-flex align-items-center">
+				<div>
+					<h2>自動模式</h2>
+					<p>由AI影像辨識即時算出人臉的座標，並透過兩顆步進馬達控制相機角度定位人臉。</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="row justify-content-center mt-4 flex-row-reverse">
+			<div class="col-md-5">
+				<img class="height-s5 w-100 object-fit-cover"
+					src="https://watermark.lovepik.com/photo/20211120/large/lovepik-the-gaze-of-a-silver-tiger-picture_500478744.jpg">
+			</div>
+			<div class="col-md-5 d-flex align-items-center">
+				<div>
+					<h2>手動模式</h2>
+					<p>透過座標，以網頁上的操作介面進行鏡頭角度調整。</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<footer class="bg-dark mt-6 py-5">
+		<div class="container text-white d-flex justify-content-between">
+			<div class="h1">
+				盯霸
+				<br>
+				<div class="h6 mt-2">
+					自動追蹤
+					</h6>
+				</div>
+			</div>
+			<div class="h1">
+				連結
+				<br>
+				<div class="h6 d-flex justify-content-start mt-2">
+					<a href="#">首頁</a>&nbsp&nbsp&nbsp&nbsp<a href="/contact">關於我們</a>
+					</h6>
+				</div>
+			</div>
+	</footer>
+
+</body>
+
+</html>
