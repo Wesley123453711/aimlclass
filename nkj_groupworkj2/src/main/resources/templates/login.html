@@ -59,7 +59,7 @@ google.addEventListener('click',function(e){
 	//可用 fetch() 傳輸後端
 		authenticate().then(loadClient).then(function(){
 			fetch(
-					'/doLogin?email='+ email 
+					'/doApiLogin?email='+ email 
 					+'&password='+ password
 					+'&loginstatus='+ sign
 					)
@@ -74,10 +74,10 @@ facebook.addEventListener('click',function(e){
     //可用 fetch() 傳輸後端
         fblogin()
 		fetch(
-				'/doLogin?email='+ "wesiey871026@gmail.com" 
-				+'&password='+ "asdasdasdasd"
+				'/doApiLogin?email='+ email 
+				+'&password='+ password
 				+'&loginstatus='+ sign
-				,'post')
+				)
 		    .then(function(response){
 		        console.log('fb登入傳送後端成功',response)
 	            },

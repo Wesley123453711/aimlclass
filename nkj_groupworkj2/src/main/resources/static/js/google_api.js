@@ -1,4 +1,4 @@
-var redirect = " https://85b4-1-160-23-171.jp.ngrok.io/";
+var redirect = " https://a7b8-1-160-23-171.jp.ngrok.io/";
 var apikey = "AIzaSyC0jPQ_aKzKy8c-tgb51KsWlI9yenvrnYc";
 var clientid = "1060838685118-9id0hmf1nuos4iuql3brnk33br99erva.apps.googleusercontent.com";
 var broadcast_id;

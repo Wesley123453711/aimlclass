@@ -32,7 +32,7 @@ window.fbAsyncInit = function() {
 // 頁面加載完畢後印出登入狀態
 window.onload =function(){
     FB.getLoginStatus((response) => { 
-        console.log('頁面加載完畢', response); // 這裡印出fb登入狀態
+        console.log('fb登入狀態', response); // 這裡印出fb登入狀態
         if(response.status === 'connected') {  // 若為登入狀態則存Token
             accessToken = response.authResponse.accessToken;
             FB.api("/me?fields=name,email,id",function(response){

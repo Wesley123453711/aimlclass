@@ -45,4 +45,5 @@ public class MemberRepository {
 			return new MemberModel(rs.getString("email"), rs.getString("password"), rs.getString("role"));
 		}
 	}
+
 }
