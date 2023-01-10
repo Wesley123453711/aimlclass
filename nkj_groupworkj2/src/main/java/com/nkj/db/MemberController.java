@@ -1,13 +1,17 @@
 package com.nkj.db;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,29 +31,32 @@ public class MemberController {
 	MemberRepository userDAO;
 
 	@RequestMapping("/createMember")
-	public String create(@RequestParam String[] data) {
+	public String create(HttpServletResponse response, @RequestParam String e, @RequestParam String p) throws IOException {
 		memberModel = new MemberModel();
-		String email = data[0];
-		String password = data[1];
+		String email = e;
+		String password = p;
 
 		List<MemberModel> selectMember = userDAO.selectMember(memberModel);
 
-		// 檢查帳號是否為有效的電子郵件地址
-		if (!isValidEmail(email)) {
-			if (!isValidPassword(password)) {
+		if (!isValidEmail(email)) { // 檢查帳號是否為有效的電子郵件地址
+			if (!isValidPassword(password)) { // 檢查密碼是否符合密碼強度要求
+				response.sendRedirect("/login");
 			}
-			return "帳號或密碼格式不正確，請重新輸入"; // 返回錯誤訊息
+			return "帳號或密碼格式不正確，請重新輸入";
+
+			// 返回錯誤訊息
 		}
-		// 檢查密碼是否符合密碼強度要求
-		else if (selectMember != null) {
+
+		else if (!(selectMember==null)) {
 			return "帳號已經存在，請使用其他帳號";
+
 		}
 
 		else {
 			memberModel.setEmail(email);
 			memberModel.setPassword(password);
 			userDAO.insert(memberModel);
-			return "帳號創建成功";// 重新登入
+			return "已成功註冊帳號";// 重新登入
 		}
 	}
 
@@ -70,24 +77,36 @@ public class MemberController {
 			throws IOException {
 		String email = data[0];
 		String password = data[1];
+		String checkEmail = null;
+		String checkPassword = null;
+//		PrintWriter out =response.getWriter();
 		MemberModel input = new MemberModel();
+
 		input.setEmail(email);
 
 		List<MemberModel> selectMember = userDAO.selectMember(input);
-		String check = selectMember.get(0).getPassword();
+
+		if (selectMember.size() > 0) {
+			checkEmail = selectMember.get(0).getEmail();
+			checkPassword = selectMember.get(0).getPassword();
+		}
+		System.out.println(selectMember);
+
 		System.out.println(password);
-		System.out.println(check);
-		if (password.length() == 0) {
-			System.out.println("沒有輸入密碼!!");
+		System.out.println(checkEmail);
+		System.out.println(checkPassword);
+		if (password.length() == 0 || email.length() == 0) {
+			System.out.println("沒有輸入帳號或密碼!!");
+//			out.print("<script>alert(\"帳號或密碼格式不正確，請重新輸入\");</script>");
 			response.sendRedirect("/login");
-		} else if (password.equals(check)) {
+		} else if (password.equals(checkPassword) && email.equals(checkEmail)) {
 			session.setAttribute("uid", email);
 //			Cookie cookie = new Cookie("SESSIONID", session.getId());
 //			response.addCookie(cookie);
 			System.out.println("成功登入!");
 			response.sendRedirect("/");
 		} else {
-			System.out.println("密碼錯誤!!");
+			System.out.println("帳號或密碼錯誤!!");
 			System.out.println(password);
 			response.sendRedirect("/login");
 		}
@@ -105,8 +124,6 @@ public class MemberController {
 
 		if (password.equals(check)) {
 			session.setAttribute("uid", email);
-//			Cookie cookie = new Cookie("SESSIONID", session.getId());
-//			response.addCookie(cookie);
 			System.out.println("成功登入!");
 			response.sendRedirect("/");
 		} else if (loginstatus == "true") {

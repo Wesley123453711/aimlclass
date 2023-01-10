@@ -42,6 +42,10 @@ public class PageController {
 		return "signin.html";
 	}
 	
+	@RequestMapping("/select")
+	public String select() {
+		return "select.html";
+	}
 //	@ResponseStatus(value = HttpStatus.OK)
 //	@GetMapping(value = "/user/{name}")
 //	public void process(@PathVariable String name) {

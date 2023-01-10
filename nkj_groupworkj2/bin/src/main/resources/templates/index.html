@@ -10,12 +10,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
 	integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"
 	referrerpolicy="no-referrer"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="js/google_api.js"></script>
+<script src="js/facebook_api.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
+		
 		$("#goLogin").click(function(e) {
-			location.href = '/login';
+			const uid = '[[${session.uid}]]'
+			if(uid.length>0){
+				
+				signout()
+				fblogout()
+				location.href ='/deletesession'
+			}else{
+				location.href = '/login';
+			}
+			
 		});
-
+		
 		$("#goReg").click(function(e) {
 			location.href = '/signin';
 		});
@@ -24,6 +37,7 @@
 			location.href = '/websocket/100';
 		});
 	});
+	
 </script>
 
 </head>
@@ -43,7 +57,7 @@
 					</li>
 					</li>
 					<li class="nav-item">
-						<button type="button" class="btn btn-primary" id="goLogin">登入</button>
+						<button th:text="${session.uid != null ? '登出':'登入'}" type="button" class="btn btn-primary" id="goLogin">登入</button>
 					</li>
 				</ul>
 				<button type="button" class="btn btn-primary" id="goReg">註冊</button>
@@ -106,7 +120,6 @@
 				</div>
 			</div>
 	</footer>
-
 </body>
 
 </html>
